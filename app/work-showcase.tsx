@@ -171,11 +171,12 @@ type ImageTriggerProps = {
   project: ProjectImage;
   className: string;
   sizes: string;
+  blurredBackdrop?: boolean;
   tabIndex?: number;
   onOpen: (project: ProjectImage, opener: HTMLButtonElement) => void;
 };
 
-function ImageTrigger({ project, className, sizes, tabIndex, onOpen }: ImageTriggerProps) {
+function ImageTrigger({ project, className, sizes, blurredBackdrop = false, tabIndex, onOpen }: ImageTriggerProps) {
   return (
     <button
       type="button"
@@ -184,7 +185,23 @@ function ImageTrigger({ project, className, sizes, tabIndex, onOpen }: ImageTrig
       tabIndex={tabIndex}
       onClick={(event) => onOpen(project, event.currentTarget)}
     >
-      <Image src={project.image} alt={project.alt} fill sizes={sizes} className="showcase-image" />
+      {blurredBackdrop && (
+        <Image
+          src={project.image}
+          alt=""
+          aria-hidden="true"
+          fill
+          sizes={sizes}
+          className="featured-image-backdrop"
+        />
+      )}
+      <Image
+        src={project.image}
+        alt={project.alt}
+        fill
+        sizes={sizes}
+        className={blurredBackdrop ? "showcase-image featured-image-foreground" : "showcase-image"}
+      />
       <span className="image-zoom-hint" aria-hidden="true">↗</span>
     </button>
   );
@@ -319,7 +336,7 @@ export default function WorkShowcase() {
           <div className="projects-heading">
             <div>
               <p className="eyebrow eyebrow-light"><span /> Réalisations</p>
-              <h2>Six projets.<br /><span>Un aperçu du savoir-faire.</span></h2>
+              <h2>Nos réalisations.<br /><span>Le savoir-faire en images.</span></h2>
             </div>
             <p>
               Balcons, meubles, rampes et pare-chocs : faites défiler les réalisations
@@ -341,6 +358,7 @@ export default function WorkShowcase() {
                         project={project}
                         className="featured-image-trigger"
                         sizes="(max-width: 700px) 100vw, 70vw"
+                        blurredBackdrop
                         tabIndex={activeProject === index ? 0 : -1}
                         onOpen={openLightbox}
                       />
